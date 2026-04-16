@@ -1,0 +1,7 @@
+1. fixed CP dropfirst but still has quotation data scoring
+2. Next version to remove the quotation scoring and just keep one type 
+
+
+
+1. version logistic error - scikit 1.51. -1.7.1 fix this - fixed
+2. check for medium and scoring in function - direct atl, btl is in code but have to add in functionapp.py
