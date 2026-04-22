@@ -723,8 +723,31 @@ def digital_shap_scores(df):
     # ---------------------------
     # Core Logic (UPDATED)
     # ---------------------------
+    # New Logic
+    # Take only features where data_row[feature] == 1
+    # Apply visibility filter first
+    # Rank by SHAP value (descending)
+    # Then:
+    # Top 3 → Positive drivers
+    # Bottom 3 → Negative drivers
+    # Everything in between → Medium drivers
+    # Apply selective driver constraint (Positive / Negative / Both)
+    
+    # This logic correctly handles:
+
+    # Case 1: < 3 features
+    # All go to positive
+    # No negative/medium
+    # Case 2: Between 3–6 features
+    # Top 3 → positive
+    # Bottom 3 → negative
+    # Medium → empty
+    # Case 3: > 6 features
+    # Clean split: 3 / middle / 3
+
     def classify_shap_row(shap_row, data_row):
 
+        # Step 1: Filter active features
         filtered_pairs = [
             (feature, shap_val)
             for feature, shap_val in zip(feature_names, shap_row)
@@ -734,45 +757,53 @@ def digital_shap_scores(df):
         if len(filtered_pairs) == 0:
             return ("", "", "")
 
-        pairs_sorted = sorted(filtered_pairs, key=lambda x: x[1], reverse=True)
+        # Step 2: Apply visibility FIRST
+        visible_pairs = []
+        for feature, value in filtered_pairs:
+            control = feature_control.get(feature, {"visible": "Yes", "driver": "Both"})
+            if control["visible"] == "Yes" and control["driver"] != "":
+                visible_pairs.append((feature, value))
 
+        if len(visible_pairs) == 0:
+            return ("", "", "")
+
+        # Step 3: Rank by SHAP value
+        pairs_sorted = sorted(visible_pairs, key=lambda x: x[1], reverse=True)
+
+        # Step 4: Split into buckets
         n = len(pairs_sorted)
-        split_1 = n // 3
-        split_2 = 2 * n // 3
+
+        top_n = min(3, n)
+        bottom_n = min(3, n - top_n)  # ensures no overlap
+
+        positive_raw = pairs_sorted[:top_n]
+        negative_raw = pairs_sorted[-bottom_n:] if bottom_n > 0 else []
+        middle_raw = pairs_sorted[top_n:n - bottom_n] if n > (top_n + bottom_n) else []
 
         positive, medium, negative = [], [], []
 
-        for i, (feature, value) in enumerate(pairs_sorted):
-
-            readable = feature_map.get(feature, feature)
-
-            # Apply control
+        # Helper to apply driver filter
+        def add_if_allowed(feature, bucket, target_list):
             control = feature_control.get(feature, {"visible": "Yes", "driver": "Both"})
-
-            if control["visible"] != "Yes" or control["driver"] == "":
-                continue
-
             allowed_driver = control["driver"]
 
-            # Bucket assignment
-            if i < split_1:
-                bucket = "Positive"
-            elif i < split_2:
-                bucket = "Medium"
-            else:
-                bucket = "Negative"
+            if allowed_driver == "Both" or allowed_driver == bucket:
+                readable = feature_map.get(feature, feature)
+                target_list.append(readable)
 
-            # Driver filter
-            if allowed_driver != "Both" and allowed_driver != bucket:
-                continue
+        # Step 5: Apply selective driver rules
 
-            # Append
-            if bucket == "Positive":
-                positive.append(readable)
-            elif bucket == "Medium":
-                medium.append(readable)
-            else:
-                negative.append(readable)
+        # Positive
+        for feature, _ in positive_raw:
+            add_if_allowed(feature, "Positive", positive)
+
+        # Medium
+        for feature, _ in middle_raw:
+            add_if_allowed(feature, "Medium", medium)
+
+        # Negative
+        for feature, _ in negative_raw:
+            add_if_allowed(feature, "Negative", negative)
 
         return (
             ", ".join(positive),
