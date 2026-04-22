@@ -958,6 +958,7 @@ def cp_shap_scores(df):
     # 1. Feature Mapping Dictionary
     # ---------------------------
     feature_map = {
+         # Continuous SV months (1to1 to 1to13)
         "1to1": "Months CP continuously gave SVs 1",
         "1to2": "Months CP continuously gave SVs 2",
         "1to3": "Months CP continuously gave SVs 3",
@@ -972,6 +973,7 @@ def cp_shap_scores(df):
         "1to12": "Months CP continuously gave SVs 12",
         "1to13": "Months CP continuously gave SVs 13",
 
+        # Customer interest/behavior
         "Time to think": "Customer wants time to think",
         "Future visit": "Interested in future visit",
         "Virtual meet": "Interested in virtual meeting",
@@ -989,47 +991,69 @@ def cp_shap_scores(df):
         "Vaastu constraints": "Vaastu preference constraint",
         "Amenities constraints": "Amenities concern",
         "Property constraints": "Property related constraint",
-        "Gender_Male": "Male",
 
+        # Demographics
+        "Gender_Female": "Female",
+        "Gender_Male": "Male",
+        "Age_18_to_37": "Age: 18 to 37",
         "Age_38_to_42": "Age: 38 to 42",
         "Age_43_to_49": "Age: 43 to 49",
         "Age_50_and_above": "Age: 50+",
 
+        # Current accommodation
+        "Current Accomodation Type_Rented": "Rented house",
         "Current Accomodation Type_company-provided-house": "Company-provided house",
         "Current Accomodation Type_rent-house": "Rented house",
         "Current Accomodation Type_self-own-house": "Own house",
 
-        "Household Monthly Income (Rs)_Rs. 50,000 or less": "Income: ≤50K",
-        "Household Monthly Income (Rs)_Rs. 50,000 - Rs. 1 Lakh": "Income: 50K to 1L",
+        # Income
+        "Household Monthly Income (Rs)_Above Rs. 10 Lakhs": "Income: more than 10L",
         "Household Monthly Income (Rs)_Rs. 1 Lakh to Rs. 4 Lakhs": "Income: 1L to 4L",
         "Household Monthly Income (Rs)_Rs. 4 Lakhs to Rs. 10 Lakhs": "Income: 4L to 10L",
+        "Household Monthly Income (Rs)_Rs. 50,000 - Rs. 1 Lakh": "Income: 50K to 1L",
+        "Household Monthly Income (Rs)_Rs. 50,000 or less": "Income: ≤50K",
 
-        "Budget_Less than 50 Lakhs": "Budget: <50L",
+        # Budget
+        "Budget_1 Crore - 2 Crores": "Budget: 1Cr to 2Cr",
         "Budget_50 Lakhs - 75 Lakhs": "Budget: 50 to 75L",
         "Budget_75 Lakhs - 1 Crore": "Budget: 75L to 1Cr",
         "Budget_Above Rs. 2 Crores": "Budget: >2Cr",
+        "Budget_Less than 50 Lakhs": "Budget: <50L",
 
+        # Referrals & Engagement
+        "Refer a family or friend_No": "No Referral given",
         "Refer a family or friend_Yes": "Referral given",
+        "Re-engagement count_0_to_2": "Less re-engagement",
         "Re-engagement count_Grtr_thn_2": "High re-engagement (>2 times)",
 
+        # Property preferences
+        "Preferred Property Type_1BHK": "Preference: 1 BHK",
         "Preferred Property Type_2BHK": "Preference: 2 BHK",
         "Preferred Property Type_3BHK": "Preference: 3 BHK",
         "Preferred Property Type_4BHK": "Preference: 4 BHK",
-        "Preferred Property Type_Villa": "Preference: Villa",
-        "Preferred Property Type_Plots": "Preference: Plots",
         "Preferred Property Type_Others": "Other property type",
+        "Preferred Property Type_Plots": "Preference: Plots",
+        "Preferred Property Type_Villa": "Preference: Villa",
 
-        "SFT Range_<500": "Size: <500 sqft",
-        "SFT Range_501 - 1000": "Size: 501 to 1000 sqft",
+        # Size preferences
+        "SFT Range_1001 - 1250": "Size: 1001 to 1250 sqft",
         "SFT Range_1251 - 1500": "Size: 1251 to 1500 sqft",
+        "SFT Range_501 - 1000": "Size: 501 to 1000 sqft",
+        "SFT Range_<500": "Size: <500 sqft",
         "SFT Range_>1500": "Size: >1500 sqft",
 
+        # Customer category
+        "Category_Indian": "Indian customer",
         "Category_NRI": "NRI customer",
 
-        "Sum of Unsold inventory_lessthan15.85per": "Low unsold inventory",
+        # Inventory
+        "Sum of Unsold inventory_15.86perto32.68per": "Med unsold inventory",
         "Sum of Unsold inventory_32.69perto100perc": "High unsold inventory",
+        "Sum of Unsold inventory_lessthan15.85per": "Low unsold inventory",
 
-        "Binned_Launch_to_Appointment_-180 to -91": "Appointment much before launch",
+        # Launch timing
+        "Binned_Launch_to_Appointment_-180+": "Very early pre-launch engagement",
+        "Binned_Launch_to_Appointment_-180 to -91": "Very early pre-launch engagement",
         "Binned_Launch_to_Appointment_-91 to -61": "Early pre-launch engagement",
         "Binned_Launch_to_Appointment_-61 to -31": "Mid pre-launch engagement",
         "Binned_Launch_to_Appointment_-31 to -1": "Late pre-launch engagement",
@@ -1039,23 +1063,36 @@ def cp_shap_scores(df):
         "Binned_Launch_to_Appointment_91-180": "91 to 180 days post launch",
         "Binned_Launch_to_Appointment_180+": ">180 days post launch",
 
+        # Interaction day
+        "AI_day_Friday": "Interaction on Friday",
         "AI_day_Monday": "Interaction on Monday",
-        "AI_day_Tuesday": "Interaction on Tuesday",
-        "AI_day_Wednesday": "Interaction on Wednesday",
-        "AI_day_Thursday": "Interaction on Thursday",
         "AI_day_Saturday": "Interaction on Saturday",
         "AI_day_Sunday": "Interaction on Sunday",
+        "AI_day_Thursday": "Interaction on Thursday",
+        "AI_day_Tuesday": "Interaction on Tuesday",
+        "AI_day_Wednesday": "Interaction on Wednesday",
 
+        # CP Type
+        "CP Type_Domestic-CP": "Channel Partner: Domestic",
         "CP Type_NRI-CP": "Channel Partner: NRI",
 
+        # CP Developer/Market info
+        "DEVELOPERS YOU WORK WITH_STATUS_1_0-9": "Works with many developers (<9)",
         "DEVELOPERS YOU WORK WITH_STATUS_1_Above_9": "Works with many developers (>9)",
-        "WHICH ARE YOUR STRONG MICRO MARKET_STATUS_1_4 and above": "Strong in multiple micro markets",
-        "WHICH OTHER MARKETS DO YOU OPERATE IN_STATUS_1_3 and above": "Operates in multiple markets",
-        "TEAM SIZE_STATUS_less_than_eqlto_10": "Small team (≤10 members)",
+        "WHICH ARE YOUR STRONG MICRO MARKET_STATUS_1_0to3": "Strong in multiple micro markets (<4)",
+        "WHICH ARE YOUR STRONG MICRO MARKET_STATUS_1_4 and above": "Strong in multiple micro markets (>4)",
+        "WHICH OTHER MARKETS DO YOU OPERATE IN_STATUS_1_0-2": "Operates in multiple markets (<3)",
+        "WHICH OTHER MARKETS DO YOU OPERATE IN_STATUS_1_3 and above": "Operates in multiple markets (>3)",
 
+        # CP Team & Targets
+        "TEAM SIZE_STATUS_11 and above": "CP with big team size",
+        "TEAM SIZE_STATUS_less_than_eqlto_10": "CP with small team size",
+        "TARGET SALE FOR THIS FINANCIAL YEAR_STATUS_40-500": "Sales target: More than 40",
         "TARGET SALE FOR THIS FINANCIAL YEAR_STATUS_Out of Range": "Sales target not defined",
         "TARGET SALE FOR THIS FINANCIAL YEAR_STATUS_above10-blw40": "Sales target: 10 to 40",
 
+        # Marital & Kids
+        "Maritial_Kids_Interaction_Married with children_0-1": "Married with 1 child",
         "Maritial_Kids_Interaction_Married with children_>=2": "Married with 2+ children",
         "Maritial_Kids_Interaction_Married with children_nan": "Married, children not disclosed",
         "Maritial_Kids_Interaction_Married_0-1": "Married with ≤1 child",
@@ -1064,6 +1101,10 @@ def cp_shap_scores(df):
         "Maritial_Kids_Interaction_Single_0-1": "Single with ≤1 child",
         "Maritial_Kids_Interaction_Single_>=2": "Single with ≥2 children",
         "Maritial_Kids_Interaction_Single_nan": "Single, details missing",
+
+        # Site visit type
+        "Type_of_SV_launch": "Site visited during launch phase",
+        "Type_of_SV_sustenance": "Site visited during sustenance phase"
     }
 
     # ---------------------------

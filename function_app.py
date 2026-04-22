@@ -194,25 +194,25 @@ def HttpTrigger(req: func.HttpRequest) -> func.HttpResponse:
             processed_json = df_to_json_records(df_processed)
 
 
-        result = {
-            "Lead ID": lead_id,
-            "AI ML object ID": aiml_id,
-            "sale probability": float(proba),
-            "sale category": classification,
-            "lead type used": lead_type
-        }
-
         # result = {
         #     "Lead ID": lead_id,
         #     "AI ML object ID": aiml_id,
         #     "sale probability": float(proba),
         #     "sale category": classification,
-        #     "lead type used": lead_type,
-        #     "positive_drivers": SHAP_df['positive_drivers'].iloc[0],
-        #     "medium_drivers": SHAP_df['medium_drivers'].iloc[0],
-        #     "negative_drivers": SHAP_df['negative_drivers'].iloc[0],
-        #     "processed_features": processed_json
+        #     "lead type used": lead_type
         # }
+
+        result = {
+            "Lead ID": lead_id,
+            "AI ML object ID": aiml_id,
+            "sale probability": float(proba),
+            "sale category": classification,
+            "lead type used": lead_type,
+            "positive_drivers": SHAP_df['positive_drivers'].iloc[0],
+            "medium_drivers": SHAP_df['medium_drivers'].iloc[0],
+            "negative_drivers": SHAP_df['negative_drivers'].iloc[0],
+            "processed_features": processed_json
+        }
 
         return func.HttpResponse(
             json.dumps(result),
