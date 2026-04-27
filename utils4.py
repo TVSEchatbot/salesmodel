@@ -1112,42 +1112,53 @@ def cp_shap_scores(df):
     # ---------------------------
     feature_control = {
 
-        # Hidden features
-        **{f"1to{i}": {"visible": "No", "driver": ""} for i in range(1, 14)},
-        "Gender_Female": {"visible": "No", "driver": ""},
-        "Gender_Male": {"visible": "No", "driver": ""},
-        "Refer a family or friend_No": {"visible": "No", "driver": ""},
-        "Refer a family or friend_Yes": {"visible": "No", "driver": ""},
-        "Category_Indian": {"visible": "No", "driver": ""},
-        "CP Type_Domestic-CP": {"visible": "No", "driver": ""},
-        "CP Type_NRI-CP": {"visible": "No", "driver": ""},
-        "Type_of_SV_launch": {"visible": "No", "driver": ""},
-        "Type_of_SV_sustenance": {"visible": "No", "driver": ""},
+    # Hidden features
+    **{f"1to{i}": {"visible": "No", "driver": ""} for i in range(1, 14)},
+    **{k: {"visible": "No", "driver": ""} for k in [
+        "Gender_Female", "Gender_Male",
+        "Refer a family or friend_No",
+        "Category_Indian",
+        "CP Type_Domestic-CP", "CP Type_NRI-CP",
+        "Type_of_SV_launch", "Type_of_SV_sustenance",
+        "DEVELOPERS YOU WORK WITH_STATUS_1_0-9",
+        "DEVELOPERS YOU WORK WITH_STATUS_1_Above_9",
+        "WHICH ARE YOUR STRONG MICRO MARKET_STATUS_1_0to3",
+        "WHICH ARE YOUR STRONG MICRO MARKET_STATUS_1_4 and above",
+        "WHICH OTHER MARKETS DO YOU OPERATE IN_STATUS_1_0-2",
+        "WHICH OTHER MARKETS DO YOU OPERATE IN_STATUS_1_3 and above",
+        "TEAM SIZE_STATUS_11 and above",
+        "TEAM SIZE_STATUS_less_than_eqlto_10",
+        "TARGET SALE FOR THIS FINANCIAL YEAR_STATUS_40-500",
+        "TARGET SALE FOR THIS FINANCIAL YEAR_STATUS_Out of Range",
+        "TARGET SALE FOR THIS FINANCIAL YEAR_STATUS_above10-blw40"
+    ]},
 
-        # Positive only
-        "Household Monthly Income (Rs)_Above Rs. 10 Lakhs": {"visible": "Yes", "driver": "Positive"},
-        "Household Monthly Income (Rs)_Rs. 1 Lakh to Rs. 4 Lakhs": {"visible": "Yes", "driver": "Positive"},
-        "Household Monthly Income (Rs)_Rs. 4 Lakhs to Rs. 10 Lakhs": {"visible": "Yes", "driver": "Positive"},
-        "Re-engagement count_Grtr_thn_2": {"visible": "Yes", "driver": "Positive"},
-        "Sum of Unsold inventory_32.69perto100perc": {"visible": "Yes", "driver": "Positive"},
-        "WHICH ARE YOUR STRONG MICRO MARKET_STATUS_1_4 and above": {"visible": "Yes", "driver": "Positive"},
-        "TARGET SALE FOR THIS FINANCIAL YEAR_STATUS_40-500": {"visible": "Yes", "driver": "Positive"},
+    # Positive drivers
+    **{k: {"visible": "Yes", "driver": "Positive"} for k in [
+        "Future visit", "Virtual meet", "Purchase intent",
+        "Decision maker", "Flat preference",
+        "Re-engagement count_Grtr_thn_2",
+        "Household Monthly Income (Rs)_Above Rs. 10 Lakhs",
+        "Household Monthly Income (Rs)_Rs. 1 Lakh to Rs. 4 Lakhs",
+        "Household Monthly Income (Rs)_Rs. 4 Lakhs to Rs. 10 Lakhs",
+        "Sum of Unsold inventory_32.69perto100perc",
+        "AI_day_Friday", "AI_day_Saturday", "AI_day_Sunday"
+    ]},
 
-        # Negative only
-        "Household Monthly Income (Rs)_Rs. 50,000 - Rs. 1 Lakh": {"visible": "Yes", "driver": "Negative"},
-        "Household Monthly Income (Rs)_Rs. 50,000 or less": {"visible": "Yes", "driver": "Negative"},
-        "Budget_Less than 50 Lakhs": {"visible": "Yes", "driver": "Negative"},
-        "Re-engagement count_0_to_2": {"visible": "Yes", "driver": "Negative"},
-        "Preferred Property Type_1BHK": {"visible": "Yes", "driver": "Negative"},
-        "SFT Range_501 - 1000": {"visible": "Yes", "driver": "Negative"},
-        "SFT Range_<500": {"visible": "Yes", "driver": "Negative"},
-        "Sum of Unsold inventory_lessthan15.85per": {"visible": "Yes", "driver": "Negative"},
-        "DEVELOPERS YOU WORK WITH_STATUS_1_0-9": {"visible": "Yes", "driver": "Negative"},
-        "WHICH ARE YOUR STRONG MICRO MARKET_STATUS_1_0to3": {"visible": "Yes", "driver": "Negative"},
-        "WHICH OTHER MARKETS DO YOU OPERATE IN_STATUS_1_0-2": {"visible": "Yes", "driver": "Negative"},
-        "TARGET SALE FOR THIS FINANCIAL YEAR_STATUS_Out of Range": {"visible": "Yes", "driver": "Negative"},
+    # Negative drivers
+    **{k: {"visible": "Yes", "driver": "Negative"} for k in [
+        "Not interested",
+        "Amenities constraints", "Property constraints",
+        "Household Monthly Income (Rs)_Rs. 50,000 - Rs. 1 Lakh",
+        "Household Monthly Income (Rs)_Rs. 50,000 or less",
+        "Budget_Less than 50 Lakhs",
+        "Re-engagement count_0_to_2",
+        "Preferred Property Type_1BHK",
+        "SFT Range_501 - 1000", "SFT Range_<500",
+        "Sum of Unsold inventory_lessthan15.85per"
+    ]},
 
-        # Everything else defaults to BOTH
+    # Everything else visible + BOTH (driver = "")
     }
 
     # ---------------------------
