@@ -40,7 +40,7 @@ def HttpTrigger(req: func.HttpRequest) -> func.HttpResponse:
 
     except Exception as e:
         logging.exception("Error reading request body")
-        return func.HttpResponse(f"Invalid JSON: {str(e)}", status_code=400)
+        return func.HttpResponse(json.dumps({"error": f"Invalid JSON: {str(e)}"}),mimetype="application/json",status_code=400)
 
     # Extract lead ref
     enquiry_ref_no = data.get("leadDetail", {}).get("Enquiry_Ref_No_", "Unknown")
@@ -74,7 +74,7 @@ def HttpTrigger(req: func.HttpRequest) -> func.HttpResponse:
         if "leadDetail_Medium" in flat_df.columns and not flat_df["leadDetail_Medium"].isna().all():
             medium_val = str(flat_df["leadDetail_Medium"].iloc[0]).lower().strip()
         else:
-            return func.HttpResponse("Medium field not found in input data.", status_code=400)
+            return func.HttpResponse(json.dumps({"error": "Medium field not found in input data."}),mimetype="application/json",status_code=400)
 
         logging.info(f"Medium value detected: {medium_val}")
 
@@ -114,7 +114,7 @@ def HttpTrigger(req: func.HttpRequest) -> func.HttpResponse:
         elif any(source in medium_val for source in cp_sources):
             lead_type = "cp"
         else:
-            return func.HttpResponse("Cannot determine lead_type from Medium field.", status_code=400)
+            return func.HttpResponse(json.dumps({"error": "Cannot determine lead_type from Medium field."}),mimetype="application/json",status_code=400)
 
         logging.info(f"Lead type detected: {lead_type}")
 
@@ -141,7 +141,7 @@ def HttpTrigger(req: func.HttpRequest) -> func.HttpResponse:
 
     except Exception as e:
         logging.exception("Preprocessing error")
-        return func.HttpResponse(f"Preprocessing error: {str(e)}", status_code=500)
+        return func.HttpResponse(json.dumps({"error": f"Preprocessing error: {str(e)}"}),mimetype="application/json",status_code=500)
 
     ##########################################################################################################
     # STEP 3.5: Validation
@@ -223,4 +223,4 @@ def HttpTrigger(req: func.HttpRequest) -> func.HttpResponse:
 
     except Exception as e:
         logging.exception("Prediction error")
-        return func.HttpResponse(f"Prediction error: {str(e)}", status_code=500)
+        return func.HttpResponse(json.dumps({"error": f"Prediction error: {str(e)}"}),mimetype="application/json",status_code=500)
