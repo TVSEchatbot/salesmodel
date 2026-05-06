@@ -128,7 +128,7 @@ def HttpTrigger(req: func.HttpRequest) -> func.HttpResponse:
         if lead_type == "cp":
             base_path = os.path.join(os.path.dirname(__file__), "data")
             df_inv = pd.read_excel(os.path.join(base_path, "unsold_final.xlsx"))
-            df_cyclic = pd.read_excel(os.path.join(base_path, "CP_cyclic_Mar_Apr_26.xlsx"))
+            df_cyclic = pd.read_excel(os.path.join(base_path, "CP_Cyclic_Apr_May26.xlsx"))
 
             dfCP = CPTransformer1(data)
             df_processed = cp_pipeline_withoutQ(dfCP, df_cyclic, df_inv)
